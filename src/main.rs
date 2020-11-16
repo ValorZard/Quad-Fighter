@@ -88,6 +88,15 @@ async fn main() {
         player.position.set_x(player.position.x() + (player.velocity.x() * delta));
         player.position.set_y(player.position.y() + (player.velocity.y() * delta));
 
+        //make this a collider part of the collider class
+        draw_rectangle(
+            collider.position.x(),
+            collider.position.y(),
+            collider.width,
+            collider.height,
+            RED,
+        );
+
         // split rendering into its own code
         draw_rectangle(
             player.position.x() - player.width / 2.,
@@ -97,14 +106,7 @@ async fn main() {
             DARKPURPLE,
         );
 
-        //make this a collider part of the collider class
-        draw_rectangle(
-            collider.position.x(),
-            collider.position.y(),
-            collider.width,
-            collider.height,
-            RED,
-        );
+        draw_text("pog champ", 0., 0., 5., BLACK);
 
         next_frame().await
     }

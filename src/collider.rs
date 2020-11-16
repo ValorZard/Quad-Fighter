@@ -12,9 +12,9 @@ pub struct RectCollider {
 
 impl Collider for RectCollider {
     fn check_collision(&self, player: &mut Player) -> bool {
-        if player.position.x() >= self.position.x()
-            && player.position.x() < self.position.x() + self.width
-            && player.position.y() >= self.position.y()
+        if player.position.x() + self.width >= self.position.x()
+            && player.position.x()  < self.position.x() + self.width
+            && player.position.y() + self.height >= self.position.y()
             && player.position.y() < self.position.y() + self.height
         {
             return true;
