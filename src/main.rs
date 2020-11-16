@@ -1,6 +1,9 @@
 use macroquad::prelude::*;
-
-
+mod player;
+use player::{Player};
+mod player_resources;
+use player_resources::{player_speed, player_max_x_speed, player_deceleration, player_gravity, 
+    player_max_y_speed, player_jump_force};
 // split game logic from rendering
 // make this deterministic
 #[macroquad::main("Quad_Figher")]
@@ -19,21 +22,14 @@ async fn main() {
     });
 
     //player stuff
-    let player_max_x_speed:f32 = 15.;
-    let player_deceleration = 2.;
 
-    let player_gravity:f32 = 9.8;
-    let player_max_y_speed:f32 = 15.;
+    let mut player = Player{
+        position : Vec2::new(SCR_W / 2., SCR_H / 2.),
+        velocity : Vec2::new(0.0, 0.0),
+        width : 1.,
+        height : 1.,
+    };
 
-    let player_jump_force:f32 = 100.;
-
-    let mut player_position:Vec2 = Vec2::new(SCR_W / 2., SCR_H / 2.);
-    
-    let player_width = 1.;
-    let player_height = 1.;
-
-    let player_speed = 10.0;
-    let mut player_velocity:Vec2 = Vec2::new(0.0, 0.0);
 
     loop {
         clear_background(SKYBLUE);
@@ -42,11 +38,11 @@ async fn main() {
 
         // split input to its own code
 
-        if is_key_down(KeyCode::Right) && player_position.x() < SCR_W - player_width / 2. {
-            player_velocity.set_x(player_velocity.x() + player_speed);
+        if is_key_down(KeyCode::Right) && player.position.x() < SCR_W - player.width / 2. {
+            player.velocity.set_x(player.velocity.x() + player_speed);
         }
-        if is_key_down(KeyCode::Left) && player_position.x() > player_width / 2. {
-            player_velocity.set_x(player_velocity.x() - player_speed);
+        if is_key_down(KeyCode::Left) && player.position.x() > player.width / 2. {
+            player.velocity.set_x(player.velocity.x() - player_speed);
         }
 
         /*
@@ -55,23 +51,23 @@ async fn main() {
         }
         */
         
-        if is_key_pressed(KeyCode::Up) && player_position.y() > player_height / 2. {
-            player_velocity.set_y(player_velocity.x() - player_jump_force);
+        if is_key_pressed(KeyCode::Up) && player.position.y() > player.height / 2. {
+            player.velocity.set_y(player.velocity.x() - player_jump_force);
         }
         
 
-        velocity_clamping(&mut player_velocity, player_deceleration, player_gravity,
+        player.velocity_clamping(player_deceleration, player_gravity,
             player_max_x_speed, player_max_y_speed);
 
-        player_position.set_x(player_position.x() + (player_velocity.x() * delta));
-        player_position.set_y(player_position.y() + (player_velocity.y() * delta));
+        player.position.set_x(player.position.x() + (player.velocity.x() * delta));
+        player.position.set_y(player.position.y() + (player.velocity.y() * delta));
 
         // split rendering into its own code
         draw_rectangle(
-            player_position.x() - player_width / 2.,
-            player_position.y() - player_height / 2.,
-            player_width,
-            player_height,
+            player.position.x() - player.width / 2.,
+            player.position.y() - player.height / 2.,
+            player.width,
+            player.height,
             DARKPURPLE,
         );
 
@@ -79,29 +75,3 @@ async fn main() {
     }
 }
 
-fn velocity_clamping(velocity: &mut Vec2, deceleration: f32, gravity: f32, max_x_speed: f32, max_y_speed: f32){
-    if velocity.x() >= 0.0 {
-        velocity.set_x(velocity.x() - deceleration);
-        if velocity.x() <= 0.0 {
-            velocity.set_x(0.0);
-        }
-        else if velocity.x() > max_x_speed {
-            velocity.set_x(max_x_speed);
-        }
-    }
-    else
-    {
-        velocity.set_x(velocity.x() + deceleration);
-        if velocity.x() >= 0.0 {
-            velocity.set_x(0.0);
-        }
-        else if velocity.x() < -max_x_speed {
-            velocity.set_x(-max_x_speed);
-        }
-    }
-
-    velocity.set_y(velocity.y() + gravity);
-    if velocity.y() > max_y_speed {
-        velocity.set_y(max_y_speed);
-    }
-}
