@@ -2,8 +2,7 @@ use macroquad::prelude::*;
 mod player;
 use player::{Player};
 mod player_resources;
-use player_resources::{player_speed, player_max_x_speed, player_deceleration, player_gravity, 
-    player_max_y_speed, player_jump_force};
+use player_resources::{PlayerConfig};
 // split game logic from rendering
 // make this deterministic
 #[macroquad::main("Quad_Figher")]
@@ -30,6 +29,8 @@ async fn main() {
         height : 1.,
     };
 
+    let player_config: PlayerConfig = Default::default();
+
 
     loop {
         clear_background(SKYBLUE);
@@ -39,10 +40,10 @@ async fn main() {
         // split input to its own code
 
         if is_key_down(KeyCode::Right) && player.position.x() < SCR_W - player.width / 2. {
-            player.velocity.set_x(player.velocity.x() + player_speed);
+            player.velocity.set_x(player.velocity.x() + player_config.speed);
         }
         if is_key_down(KeyCode::Left) && player.position.x() > player.width / 2. {
-            player.velocity.set_x(player.velocity.x() - player_speed);
+            player.velocity.set_x(player.velocity.x() - player_config.speed);
         }
 
         /*
@@ -52,12 +53,12 @@ async fn main() {
         */
         
         if is_key_pressed(KeyCode::Up) && player.position.y() > player.height / 2. {
-            player.velocity.set_y(player.velocity.x() - player_jump_force);
+            player.velocity.set_y(player.velocity.x() - player_config.jump_force);
         }
         
 
-        player.velocity_clamping(player_deceleration, player_gravity,
-            player_max_x_speed, player_max_y_speed);
+        player.velocity_clamping(player_config.deceleration, player_config.gravity,
+            player_config.max_x_speed, player_config.max_y_speed);
 
         player.position.set_x(player.position.x() + (player.velocity.x() * delta));
         player.position.set_y(player.position.y() + (player.velocity.y() * delta));
