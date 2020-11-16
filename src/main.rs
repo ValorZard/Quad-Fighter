@@ -3,8 +3,11 @@ mod player;
 use player::{Player};
 mod player_resources;
 use player_resources::{PlayerConfig};
+mod collider;
+use collider::RectCollider;
 // split game logic from rendering
 // make this deterministic
+// write the code so that you can rip out a lot of this and put it in another engine, and it would still work
 #[macroquad::main("Quad_Figher")]
 async fn main() {
     //Screen stuff
@@ -57,6 +60,7 @@ async fn main() {
         }
         
 
+        //put this in a physics rendering function
         player.velocity_clamping(player_config.deceleration, player_config.gravity,
             player_config.max_x_speed, player_config.max_y_speed);
 
@@ -69,6 +73,15 @@ async fn main() {
             player.position.y() - player.height / 2.,
             player.width,
             player.height,
+            DARKPURPLE,
+        );
+
+        //make this a collider part of the collider class
+        draw_rectangle(
+            0.,
+            19.,
+            100.,
+            1.,
             DARKPURPLE,
         );
 
