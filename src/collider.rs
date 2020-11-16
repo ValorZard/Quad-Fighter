@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use player::Player;
+use crate::player::Player;
 trait Collider {
     fn check_collision(&self, player: &mut Player);
 }
