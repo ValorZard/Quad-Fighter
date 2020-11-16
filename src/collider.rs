@@ -1,23 +1,24 @@
 use macroquad::prelude::*;
 use crate::player::Player;
-trait Collider {
-    fn check_collision(&self, player: &mut Player);
+pub trait Collider {
+    fn check_collision(&self, player: &mut Player) -> bool;
 }
 
 pub struct RectCollider {
-    position: Vec2,
-    width: f32,
-    height: f32,
+    pub position: Vec2,
+    pub width: f32,
+    pub height: f32,
 }
 
 impl Collider for RectCollider {
-    fn check_collision(&self, player: &mut Player) {
+    fn check_collision(&self, player: &mut Player) -> bool {
         if player.position.x() >= self.position.x()
             && player.position.x() < self.position.x() + self.width
             && player.position.y() >= self.position.y()
             && player.position.y() < self.position.y() + self.height
         {
-            player.velocity = Vec2::new(0.0, 0.0);
+            return true;
         }
+        false
     }
 }

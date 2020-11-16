@@ -4,6 +4,8 @@ pub struct Player{
     pub width : f32,
     pub height : f32,
     pub velocity : Vec2,
+    pub is_jumping : bool,
+    pub on_ground : bool,
 }
 
 impl Player {
